@@ -1,29 +1,34 @@
-# A set of tasks for the Automate2001 bot to perform here
-automate2001_tasks:
-isAlldone: "False"
+import sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Any, Dict
 
--
-Automate-All-ContributorSrc:
--
-Automate-Pull-Requests-archival
-isAdone: "False"
-Automate-Index-file
-isBdone: "False"
-Automate-Issue-archival
-isCdone: "False"
+sys.path.append(Path(__file__).parent.parent)
 
--
-Automate-RepoData:
--
-Automate-RepoData-Description
-isDDone: "False"
-Automate-RepoData-GitHubLink
-isEDone: "False"
-Automate-RepoData-GitHubGitLink
-isFDone: "False"
-Automate-RepoData-Linked
-isGDone: "False"
-Automate-RepoData-Topics
-isHDone: "False"
+from llama_hub.file.base import SimpleDirectoryReader
 
-# File version: 1 (2022, Tuesday, February 22nd at 8:07 pm)
+
+def test_recursive() -> None:
+    """Test simple directory reader in recursive mode."""
+    # test recursive
+    with TemporaryDirectory() as tmp_dir:
+        with open(f"{tmp_dir}/test1.txt", "w") as f:
+            f.write("test1")
+        with TemporaryDirectory(dir=tmp_dir) as tmp_sub_dir:
+            with open(f"{tmp_sub_dir}/test2.txt", "w") as f:
+                f.write("test2")
+            with TemporaryDirectory(dir=tmp_sub_dir) as tmp_sub_sub_dir:
+                with open(f"{tmp_sub_sub_dir}/test3.txt", "w") as f:
+                    f.write("test3")
+                with open(f"{tmp_sub_sub_dir}/test4.txt", "w") as f:
+                    f.write("test4")
+
+                    reader = SimpleDirectoryReader(tmp_dir, recursive=True)
+                    input_file_names = [f.name for f in reader.input_files]
+                    assert len(reader.input_files) == 4
+                    assert set(input_file_names) == {
+                        "test1.txt",
+                        "test2.txt",
+                        "test3.txt",
+                        "test4.txt",
+                    }
