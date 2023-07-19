@@ -45,5 +45,3 @@ func BenchmarkMapFormFull(b *testing.B) {
 		}
 	}
 	b.StopTimer()
-
-	t := b
